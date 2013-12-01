@@ -6,13 +6,14 @@
 --------------------Configuration: Test1 - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP56E5.tmp" with contents
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP545F.tmp" with contents
 [
 /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /Fr"Debug/" /Fp"Debug/Test1.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
 "C:\Users\Administrator\Desktop\ģʽ\Test1View.cpp"
+"C:\Users\Administrator\Desktop\ģʽ\Text.cpp"
 ]
-Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP56E5.tmp" 
-Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP56E6.tmp" with contents
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP545F.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP5460.tmp" with contents
 [
 /nologo /subsystem:windows /incremental:yes /pdb:"Debug/Test1.pdb" /map:"Debug/Test1.map" /debug /machine:I386 /out:"Debug/Test1.exe" /pdbtype:sept 
 ".\Debug\MainFrm.obj"
@@ -23,16 +24,19 @@ Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP56E6.tmp" with 
 ".\Debug\Text.obj"
 ".\Debug\Test1.res"
 ]
-Creating command line "link.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP56E6.tmp"
+Creating command line "link.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP5460.tmp"
 <h3>Output Window</h3>
 Compiling...
 Test1View.cpp
-c:\users\administrator\desktop\ģʽ\text.h(321) : warning C4018: '<' : signed/unsigned mismatch
-c:\users\administrator\desktop\ģʽ\text.h(322) : warning C4018: '>=' : signed/unsigned mismatch
+c:\users\administrator\desktop\ģʽ\text.h(264) : warning C4018: '<' : signed/unsigned mismatch
+c:\users\administrator\desktop\ģʽ\text.h(265) : warning C4018: '>=' : signed/unsigned mismatch
+Generating Code...
+Compiling...
+Text.cpp
+c:\users\administrator\desktop\ģʽ\text.h(264) : warning C4018: '<' : signed/unsigned mismatch
+c:\users\administrator\desktop\ģʽ\text.h(265) : warning C4018: '>=' : signed/unsigned mismatch
+Generating Code...
 Linking...
-Creating command line "bscmake.exe /nologo /o"Debug/Test1.bsc"  ".\Debug\StdAfx.sbr" ".\Debug\MainFrm.sbr" ".\Debug\Test1.sbr" ".\Debug\Test1Doc.sbr" ".\Debug\Test1View.sbr" ".\Debug\Text.sbr""
-Creating browse info file...
-<h3>Output Window</h3>
 
 
 

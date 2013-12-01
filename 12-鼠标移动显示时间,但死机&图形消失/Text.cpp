@@ -16,7 +16,7 @@ static char THIS_FILE[]=__FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 unsigned char TextData[2000]={0}; //存放每次需要显示的2000个数据,注意,这是一个全局变量,调用需注意
-unsigned char StartTime[6]={0};   //Y-M-D-H-M-S
+
 Text::Text()
 {
     LineNum=0;

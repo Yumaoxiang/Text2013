@@ -13,9 +13,7 @@
 
 #define TextLine 720
 //unsigned char TD1[5]={0};
-extern unsigned char TextData[2000];  //全局变量
-extern unsigned char StartTime[6];    //全局变量
-
+extern unsigned char TextData[2000];
 class Text  
 {
 public:
@@ -40,28 +38,9 @@ public:
 		return linenum;
 	}
 
-
-
-	/**函数2-提取文件file中最早数据时间,名称需要修改-已验证**/
-	char StartLineFind(CStdioFile &file,unsigned char* TimeTable){
-	    CString Str;
-		char *ptrStr;
-		int LineCnt=0;
-		int LineNum=LineFind(file);                  //计算共多少行,后面如果Begin在最后一行做判断
-		
-		file.Seek(0,CFile::begin);                   //确定从文件起始位置查找
-		while (file.ReadString(Str)!=FALSE || FileData.GetLength()!=0){
-			LineCnt++;                               //读取文件行数计数
-			ptrStr=Str.GetBuffer(Str.GetLength());   //使用指针,准备字符查找
-			if((*ptrStr=='B')||(*(ptrStr+1)=='B')){  //找到Begin位置,下一行是最早数据
-				if(LineCnt>=LineNum)                 //如果Begin在最后一行
-					file.Seek(0,CFile::begin);       //回到起始位置
-				file.ReadString(Str);				 //读取Beigin下一行数据
-				TimePick(ptrStr,TimeTable);          //存储其实时间到StartTime中
-				return 1;
-			}
-		}
-		return 0;
+	/*该函数未成功使用,因为line是偏移byte数而不是行数...*/
+	int LinePos(CStdioFile &file,unsigned int line){
+	    file.Seek(file,line);
 	}
 
 	//file-->当前文本(4M) ,该函数需要修改，i<TextLine应该改为LineFind模式查找起始位置
@@ -186,42 +165,6 @@ public:
 		return TimeSubNum;  
 	}
 
-	//滑块相对与StartTime处的时间转换函数
-	//pt1-->文件最早时间点StartTime  pt2-->临时变量,每个函数中将滑块变换时间的临时数组
-	void RelativeScrollTime(unsigned char* pt1,unsigned char*p2){       
-		unsigned char p1[6]={0};     //利用临时变量,防止修改第一个参数数值
-	
-		for(int i=0;i<6;i++){        //将起始时间赋给临时变量
-		    p1[i]=*(pt1+i);
-		}
-
-		*(p2+5)=*(p2+5)+*(p1+5); //计算Second
-		if(*(p2+5)/60){                  //如果Second>=60
-		    *(p2+5)=*(p2+5)%60;       //计算正确的Second
-			*(p2+4)=*(p2+4)+1;                   //Minute自增
-		}
-		*(p2+4)=*(p2+4)+*(p1+4); //计算Minute
-		if(*(p2+4)/60){                  //如果Minute>=60
-		    *(p2+4)=*(p2+4)%60;    //计算正确的Minute
-			*(p2+3)=*(p2+3)+1;                   //Hour自增
-		}
-		*(p2+3)=*(p2+3)+*(p1+3); //计算Hour
-		if(*(p2+3)/24){  //如果Hour>=24
-		    *(p2+3)=*(p2+3)%24;       //计算正确的Hour
-			*(p2+2)=*(p2+2)+1;   //Day自增
-		}
-        *(p2+2)=*(p2+2)+*(p1+2); //计算Day
-		if(*(p2+2)>Calendar[*(p1+1)]){/*注意这里没有用TimeLine0[1]*///如果月份超过当前月份的最大Day数
-			*(p2+2)=*(p2+2)%Calendar[*(p1+1)];//取出正确的日期数
-			*(p2+1)=*(p2+1)+1;
-		}
-		*(p2+1)=*(p2+1)+*(p1+1); /*这里面没有算闰年,后续需优化*/
-		if(*(p2+1)>12){
-		   *(p2+1)=1;
-		   *p2=*p2+1;
-		}
-		*p2=*p2+*p1;//提取Year
-	}
 
 
 	//获取当前滑轮滚动位置应该读取的2000个数据
@@ -271,7 +214,7 @@ public:
         
 		//计算当前Scroll对应时间
 		unsigned char CurTime[6]={0};       //存储滑轮滚动的时间
-		ScrollTime(ScrollNum,CurTime);      //提取出的时间放置到CurTime中
+		ScrollTime(ScrollNum,CurTime);      //提取出的时间放置到TempTime中
 
         //从滑轮相对时间,开始计算从最早时间开始的绝对时间
 		CurTime[5]=CurTime[5]+TimeLine0[5]; //计算Second

@@ -55,70 +55,41 @@ BOOL CTest1View::PreCreateWindow(CREATESTRUCT& cs)
 	return CScrollView::PreCreateWindow(cs);
 }
 
-extern unsigned char TextData[2000];  //全局变量
-
+extern unsigned char TextData[2000];  //唯一的全局变量
 /////////////////////////////////////////////////////////////////////////////
 // CTest1View drawing
-#define CorLeftSpace    50            /*坐标线距离左边边框距离*/
-#define CorUpSpace      100           /*坐标线距离上边边框距离*/
-#define CorDownPos      700           /*坐标线到下边位置,因为比较大,所以需要利用下拉条*/
-#define CorRightPos     2000          /*坐标线到右边位置,因为比较大,所以预示后面还有数据*/
 
 void CTest1View::OnDraw(CDC* pDC)
 {
 	CTest1Doc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	// TODO: add draw code for native data here
-    
+    CString s;
+	s.Format("Origin Test");   //产生窗口将要输出的文字,此处CString.Format很好
+	pDC->TextOut(0,50,s);
     
     CClientDC dc(this);
-	m_ptScroll=GetScrollPosition();   //获取当前滑块位置
+	m_ptScroll=GetScrollPosition();
+	//dc.MoveTo(0,m_ptScroll.x/37500);
+	//dc.LineTo(m_ptScroll.x+1200,(m_ptScroll.x+1200)/37500);
 
-/******************************1.0添加坐标架构******************************/
-    CPen pen,PenDash,PenCoordi;
+	unsigned char Table[2000];
+	for(int x=0;x<2000;x++){
+	    Table[x]=x%255;      
+	}
+	dc.MoveTo(0,Table[0]-m_ptScroll.y);
+	for(x=0;x<1000;x++){
+    	dc.LineTo(x,Table[x]*3-m_ptScroll.y);
+	}
+
+	dc.MoveTo(0,TextData[0]-m_ptScroll.y);
+	for(x=0;x<2000;x++){
+    	dc.LineTo(x,TextData[x]-m_ptScroll.y);
+	}
+
 	
-	//画L架构
-	pen.CreatePen(PS_SOLID,3,RGB(0,0,0));               //创建一个L坐标粗线的画笔
-	CPen *OldPen=dc.SelectObject(&pen);                 //选择该画笔
-	dc.MoveTo(CorLeftSpace,CorUpSpace-m_ptScroll.y);    //相对于下滑快的左上角位置
-	dc.LineTo(CorLeftSpace,CorDownPos-m_ptScroll.y);    //相对于下滑快画一条竖线
-	dc.MoveTo(CorLeftSpace,CorDownPos-m_ptScroll.y);    //相对于下滑快的右下角位置
-	dc.LineTo(CorRightPos,CorDownPos-m_ptScroll.y);     //相对于下滑快画一条横线
-
-	//画短刻度线
-	PenCoordi.CreatePen(PS_SOLID,3,RGB(0x27,0x40,0x8B));      //创建蓝色虚线,准备画网格
-	OldPen=dc.SelectObject(&PenCoordi);
-	for(int grid=0;grid<10;grid++){
-		dc.MoveTo(CorLeftSpace,640-(grid*60)-m_ptScroll.y);   //以60为1A,每50mA用3个点表示来画线
-		dc.LineTo(CorLeftSpace+5,640-(grid*60)-m_ptScroll.y); //所以TextData数组一定要转换成50mA的整数倍
-	}
-
-	//画网格
-	PenDash.CreatePen(PS_DOT,1,RGB(0,0,255));
-    OldPen=dc.SelectObject(&PenDash);
-	for(grid=0;grid<10;grid++){
-	    dc.MoveTo(CorLeftSpace,640-(grid*60)-m_ptScroll.y);   //横线 50,700为起始点
-	    dc.LineTo(CorRightPos,640-(grid*60)-m_ptScroll.y);    //横线 2000,700为终点
-	}
-
-	pen.DeleteObject();
-
-	//标数字
-	CString s;
-
-	char ScaleTable[3];                        //使用数组存储带显示的字符
-	ScaleTable[1]='A';ScaleTable[2]='\0';      //数组第2个&第3个存储固定的数字,'\0'为停止符,否则会出现乱码
-	char *pT=ScaleTable;                       //该指针为后续s.Format(pT);调用,因s.Format需传入指针
-	for(grid=0;grid<10;grid++){				   //画0—9刻度,因为10A还要计算,后续单独画,这样2种方式就都用到了
-		ScaleTable[0]=(0x30+grid);             //转换成可以识别的数组
-	    s.Format(pT);                          //转换成字符串
-        pDC->TextOut(10,690-grid*60,s);        //指示位置进行显示
-	}
-	s.Format("10A");     pDC->TextOut(10,90,s);//产生窗口将要输出的文字,此处CString.Format很好
-/******************************1.1添加坐标结束******************************/
-
-/******************************2.0根据数据画线******************************/
-
+	//dc.LineTo(500,600);
+	//dc.LineTo(600,600);
 }
 
 void CTest1View::OnInitialUpdate()
@@ -222,7 +193,25 @@ void CTest1View::OnFileOpen()
 		txt1.TotalLineNum=txt1.LineFind(FileGlobal);    //该句不能删除,后面ScrollData中会调用
 		txt2.TotalLineNum=txt2.LineFind(FileGlobal);
 		
-		txt1.StartLineFind(FileGlobal,StartTime);     //存储StartTime,鼠标显示时间调用
+		//		Text::TotalLineNum=txt1.LineFind(FileGlobal);
+		//char Check=0;
+
+		//txt.DataPick(File,3,5);
+		//txt.ScrollData(FileGlobal,0);
+        /*CString FileTemp;     //验证定位,存储字符串
+		for(int k=0;k<3;k++){
+		  File.ReadString(FileTemp);
+		  File.Seek(0,CFile::begin);
+		}*/
+        
+		
+		/*Check=txt.HeadFind(File);
+        if(!Check)
+			MessageBox("未找到头文件位置");*/
+
+		//Check=txt.DataCheck();
+
+		//int temp=txt.LineFind(FileGlobal);
 
 
 	}
@@ -263,26 +252,7 @@ void CTest1View::OnMouseMove(UINT nFlags, CPoint point)
 	rect.left=0;rect.top=0;rect.right=200;rect.bottom=30;
 	InvalidateRect(&rect);
 	UpdateWindow();
-
-
-	Text TxtMouse;
-    unsigned char CurScrTime[6]={0};//记录当前滑块时间
-    unsigned char CurCurTime[6]={0};//记录当前鼠标位置
-	//1.打开文件时已经记录了最早时间点
-	m_ptScroll=GetScrollPosition();      //2.记录当前滑块位置,准备转化为相对时间点
-	TxtMouse.ScrollTime(m_ptScroll.x,CurScrTime);//3.1将滑块位置转化成时间
-    TxtMouse.RelativeScrollTime(StartTime,CurScrTime);//3.2获取当前时间
-    
-    if(point.x>=CorLeftSpace){     //4.若时间点满足要求,进行显示,Y轴后续需计算相对位置
-		point.x=point.x-CorLeftSpace;//4.1转换位相对于坐标的0点位置偏移
-	    TxtMouse.ScrollTime(point.x,CurCurTime);//4.2将鼠标位置转换成时间,很明显,函数需要改名了
-		TxtMouse.RelativeScrollTime(CurScrTime,CurCurTime);//4.3得出现在鼠标时间
-	}
-
-    str1.Format("当前时间: %d-%d-%d %d:%d:%d",CurCurTime[0],CurCurTime[1],CurCurTime[2],CurCurTime[3],CurCurTime[4],CurCurTime[5]); //5.显示
-
-	//程序出现死机,图形消失,明天该检查了！！！2013-11-28 
-
+    str1.Format("当前窗口坐标：x=%d,y=%d",point.x,point.y);
     CDC *pDC=GetDC();
     //pDC->SetBkColor(RGB(128,128,128));
     pDC->TextOut(0,0,str1);
